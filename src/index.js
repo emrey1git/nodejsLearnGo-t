@@ -219,6 +219,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/database.js';
 import userRoutes from './routes/userRoutes.js';
+import creditCardRoutes from './routes/creditCardRoutes.js';
+import balanceRoutes from './routes/balanceRoutes.js';
 
 dotenv.config();
 connectDB();
@@ -229,22 +231,28 @@ const PORT = process.env.PORT ||3000;
 app.use(cors());
 app.use(express.json());
 
+
+
 app.get("/",(req,res) =>res.json({
   message: "Node.js mongoDB çalışıyor",
   status:"success",
-  endpoints:{
-    users:"/users"
-  }
+ endpoints:{
+  users:"/users",
+  creditCards: "/credit-card",
+  balance: "/balance"
+}
+
 }));
 app.use("/users", userRoutes);
-
+app.use("/credit-card", creditCardRoutes);
+app.use("/balance", balanceRoutes);
 
 
 
 
 app.use("*",(req,res)=>{
   res.status(404).json({
-    succsess:false,
+    success:false,
     message:"Route bulunamadı"
   });
 });

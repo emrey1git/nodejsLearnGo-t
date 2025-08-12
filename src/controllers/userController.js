@@ -5,7 +5,7 @@ import User from '../db/models/User.js';
 export const getAllUsers = async (req, res)=>{
     try {
         //tüm kullanıcıları tarihe göre azalan sırada getir
-        const users = await User.find().sort({createAt: -1});
+        const users = await User.find().sort({createdAt: -1});
         res.status(200).json({
             success: true,
             data: users,
