@@ -8,6 +8,9 @@ import {
 } from '../controllers/userController.js';
 const router = express.Router();
 
+import { validateRequest } from '../middlewares/validation.js';
+import { createUserSchema, updateUserSchema} from '../validators/userValidator.js';
+
 //GET /users
 router.get("/", getAllUsers);
 
@@ -15,10 +18,10 @@ router.get("/", getAllUsers);
 router.get("/:id", getUserById);
 
 //post
-router.post("/",createUser);
+router.post("/",validateRequest(createUserSchema),createUser);
 
 //put
-router.put("/:id",updateUser);
+router.put("/:id",validateRequest(updateUserSchema),updateUser);
 
 //delete
 router.delete("/:id",deleteUser);

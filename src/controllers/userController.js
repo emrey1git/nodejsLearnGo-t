@@ -1,15 +1,30 @@
 import User from '../db/models/User.js';
-
+import { parsePaginationParams } from "../utils/parsePaginationParams.js";
+import { parseSortParams } from '../utils/parseSortParams.js';
+import * as userServices from "../services/userServices.js";
+import { parseFilterParams } from '../utils/parseFilterParams.js';
 //tüm kullanıcıları getiren fonksiyon
 
 export const getAllUsers = async (req, res)=>{
     try {
+        //query parametrelerini parse et
+        const {page,perPage} = parsePaginationParams(req.query);
+        const {sortOrder, sortBy} = parseSortParams(req.query);
+        const filter = parseFilterParams(req.query);
+        const result = await userServices.getAllUsers({
+            page,
+            perPage,
+            sortOrder,
+            sortBy,
+            filter
+        });
         //tüm kullanıcıları tarihe göre azalan sırada getir
-        const users = await User.find().sort({createdAt: -1});
+        // const users = await User.find().sort({createdAt: -1});
         res.status(200).json({
             success: true,
-            data: users,
-            count:users.length
+            // data: users,
+            // count:users.length
+            ...result
         });
     } catch (error) {
         res.status(500).json({
@@ -49,12 +64,12 @@ export const createUser = async (req, res) => {
     try {
         const { name, email } = req.body; // ✅ Object destructuring
 
-        if (!name || !email) {
-            return res.status(400).json({
-                success: false,
-                message: "İsim veya email gerekli"
-            });
-        }
+        // if (!name || !email) {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: "İsim veya email gerekli"
+        //     });
+        // }   //gerek kalmadı validationla belirttik
 
         const newUser = new User({
             name,
