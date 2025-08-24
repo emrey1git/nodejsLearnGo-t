@@ -27,7 +27,6 @@
 // // const joined = path.join("/users", "emre", "deneme.txt");
 // // console.log("Joined path:", joined); // /users/emre/deneme.txt
 
-
 // // //FS MODÜLÜ
 // // const fs = require("node:fs");
 
@@ -48,8 +47,6 @@
 // //   console.log(data);
 // // });
 
-
-
 // // //dosya yazma
 // // try {
 // //   fs.writeFileSync("goit.txt", "fullstack Devoloper");
@@ -57,7 +54,6 @@
 // // } catch (error) {
 // //   console.log(error.message);
 // // }
-
 
 // // //dosya yazdırma 2
 // // fs.writeFile("goit2.txt", "frontend devoloper",(err)=>{
@@ -71,7 +67,6 @@
 // // //dosya kontrolu
 // // const check = fs.existsSync("goit.txt");
 // // console.log(check);
-
 
 // // //klasör oluşturma
 // // try {
@@ -105,7 +100,6 @@
 // // //promises yapısı ile dosya yazma
 // // const fsPromises = require("node:fs/promises");
 
-
 // // (
 // //   async()=>{
 // //     const data ="Bu dosyaya yazı yazaıyorum";
@@ -117,9 +111,6 @@
 // //     }
 // //   }
 // // )();
-
-
-
 
 // // EXPRESS
 // import express from 'express';
@@ -135,7 +126,6 @@
 // app.use(express.json());
 // app.use.(cors());
 
-
 // let users=[
 //   {id: 1, name:"Emre", email:"emre@gmail.com"},
 //   {id: 2, name:"ato", email:"atakan @gmail.com"}
@@ -146,7 +136,6 @@
 // //     message: "Hello world"
 // //   });
 // // });
-
 
 // //GET
 // app.get("/users", (req, res)=>{
@@ -194,7 +183,6 @@
 //   res.json(users[userIndex]);
 // });
 
-
 // //DELETE
 // app.delete("/users/:id", (req, res)=>{
 //   const userId= parseInt(req.params.id);
@@ -210,8 +198,6 @@
 //   console.log(`Server ${PORT} portunda çalışmaktadır.`);
 // });
 
-
-
 //MONGO DB
 
 import express from 'express';
@@ -221,42 +207,41 @@ import connectDB from './config/database.js';
 import userRoutes from './routes/userRoutes.js';
 import creditCardRoutes from './routes/creditCardRoutes.js';
 import balanceRoutes from './routes/balanceRoutes.js';
-
+import cookieParser from 'cookie-parser';
+import authRoutes from './routes/authRoutes.js';
 dotenv.config();
 connectDB();
 
-const app=express();
-const PORT = process.env.PORT ||3000;
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
+app.get('/', (req, res) =>
+  res.json({
+    message: 'Node.js mongoDB çalışıyor',
+    status: 'success',
+    endpoints: {
+      users: '/users',
+      creditCards: '/credit-card',
+      balance: '/balance',
+    },
+  }),
+);
+app.use('/users', userRoutes);
+app.use('/credit-card', creditCardRoutes);
+app.use('/balance', balanceRoutes);
+app.use("/auth",authRoutes);
 
-
-app.get("/",(req,res) =>res.json({
-  message: "Node.js mongoDB çalışıyor",
-  status:"success",
- endpoints:{
-  users:"/users",
-  creditCards: "/credit-card",
-  balance: "/balance"
-}
-
-}));
-app.use("/users", userRoutes);
-app.use("/credit-card", creditCardRoutes);
-app.use("/balance", balanceRoutes);
-
-
-
-
-app.use("*",(req,res)=>{
+app.use('*', (req, res) => {
   res.status(404).json({
-    success:false,
-    message:"Route bulunamadı"
+    success: false,
+    message: 'Route bulunamadı',
   });
 });
 
-app.listen(PORT, ()=>{
+app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

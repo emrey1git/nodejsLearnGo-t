@@ -1,13 +1,13 @@
-import { SORT_ORDER } from "../constants/index.js";
-import User from "../db/models/User.js";
-import { calculatePaginationData } from "../utils/calculatePaginationData.js";
+import { SORT_ORDER } from '../constants/index.js';
+import User from '../db/models/User.js';
+import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
 export const getAllUsers = async ({
   page = 1,
   perPage = 10,
   sortOrder = SORT_ORDER.ASC,
-  sortBy = "_id",
-  filter ={}
+  sortBy = '_id',
+  filter = {},
 }) => {
   const limit = perPage;
 
@@ -17,10 +17,7 @@ export const getAllUsers = async ({
 
   // tüm kullanıcıları sorgula
   const usersQuery = User.find(filter);
-  const userCount = await User.find(filter)
-  .merge(usersQuery)
-  .countDocuments();
-
+  const userCount = await User.find(filter).merge(usersQuery).countDocuments();
 
   const users = await usersQuery
     .skip(skip)
