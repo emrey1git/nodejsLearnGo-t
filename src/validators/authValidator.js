@@ -32,3 +32,26 @@ export const loginUserSchema = Joi.object({
     'any.required': 'Şifre alanı zorunludur',
   }),
 }).min(1); //en az bir alan güncellenmeli yoksa çalışmasına gerek yok
+
+
+export const requestResetEmailSchema = Joi.object({
+  email: Joi.string().email().required()
+  .messages({
+    'string.empty': 'Email alanı boş olamaz',
+    'any.required': 'Email alanı zorunludur',
+  }),
+});
+
+
+export const requestResetPasswordSchema = Joi.object({
+  password: Joi.string().required()
+  .messages({
+    'string.empty': 'Şifre alanı boş olamaz',
+    'any.required': 'Şifre alanı zorunludur',
+  }),
+  token: Joi.string().required()
+  .messages({
+    'string.empty': 'Token alanı boş olamaz',
+    'any.required': 'Token alanı zorunludur',
+  }),
+});

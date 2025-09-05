@@ -4,6 +4,8 @@ import {
   loginUser,
   logoutUser,
   refreshUsersSession,
+  requestResetToken,
+  resetPassword,
 } from '../services/authServices.js';
 
 const setupSession = (res, session) => {
@@ -65,7 +67,7 @@ export const logoutUserController = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message:"Çıkış başarılı"
+      message: 'Çıkış başarılı',
     });
   } catch (error) {
     res.status(error.status || 500).json({
@@ -76,28 +78,61 @@ export const logoutUserController = async (req, res) => {
   }
 };
 
+export const refreshUsersSessionController = async (req, res) => {
+  try {
+    const session = await refreshUsersSession({
+      sessionId: req.cookies.sessionId,
+      refreshToken: req.cookies.refreshToken,
+    });
+    setupSession(res, session);
 
-
-export const refreshUsersSessionController = async (req,res)=>{
-    try {
-        const session = await refreshUsersSession({
-            sessionId: req.cookies.sessionId,
-            refreshToken:req.cookies.refreshToken
-        });
-        setupSession(res,session);
-
-        res.status(200).json({
-            success: true,
-            message: "Token yenilendi",
-            data:{
-                accessToken: session.accessToken
-            }
-        });
-    } catch (error) {
-         res.status(error.status || 500).json({
+    res.status(200).json({
+      success: true,
+      message: 'Token yenilendi',
+      data: {
+        accessToken: session.accessToken,
+      },
+    });
+  } catch (error) {
+    res.status(error.status || 500).json({
       success: false,
       message: 'Sunucu hatası',
       error: error.message,
     });
-    }
+  }
+};
+
+//şşifre ve email sıfırlama
+export const requestResetEmailController = async (req, res) => {
+  try {
+    await requestResetToken(req.body.email);
+    res.json({
+      success: true,
+      message: 'Şifre sıfırlama maili başarıyla gönderildi',
+      data: {},
+    });
+  } catch (error) {
+    res.status(error.status || 500).json({
+      success: false,
+      message: 'Sunucu hatası',
+      error: error.message,
+    });
+  }
+};
+
+export const resetPasswordController = async (req, res) => {
+  try {
+    await resetPassword(req.body);
+    res.json({
+      success: true,
+      message: 'Şifre başarıyla sıfırlandı',
+      data: {},
+    });
+  } catch (error) {
+    res.status(error.status || 500).json({
+      success: false,
+      message: 'Sunucu hatası',
+      error: error.message,
+    });
+  }
 };
