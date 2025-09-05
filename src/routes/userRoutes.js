@@ -5,13 +5,15 @@ import {
     createUser,
     updateUser,
     deleteUser,
+    uploadUserPhotoController,
 } from '../controllers/userController.js';
 const router = express.Router();
 
 import { validateRequest } from '../middlewares/validation.js';
 import { createUserSchema, updateUserSchema} from '../validators/userValidator.js';
-import { requireAdmin, requireAdminOrModerator } from '../middlewares/chechkRoles.js';
+import {  requireAdminOrModerator } from '../middlewares/chechkRoles.js';
 import { authenticate } from '../middlewares/auth.js';
+import upload from '../middlewares/multer.js';
 //GET /users
 router.get("/",authenticate, requireAdminOrModerator,getAllUsers);
 
@@ -27,5 +29,7 @@ router.put("/:id",validateRequest(updateUserSchema),updateUser);
 //delete
 router.delete("/:id",deleteUser);
 
+//upload photo
+router.patch("/photo", authenticate,upload.single("photo"), uploadUserPhotoController);
 
 export default router;

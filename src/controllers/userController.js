@@ -3,7 +3,11 @@ import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import * as userServices from '../services/userServices.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
-import { ROLES } from '../constants/index.js';
+import { CLOUDINARY, ROLES } from '../constants/index.js';
+import saveFileToCloudinary from '../utils/saveFileToCloudinary.js';
+import saveFileToUploadDir from '../utils/saveFileToUploadDir.js';
+import { env } from '../utils/env.js';
+
 //tüm kullanıcıları getiren fonksiyon
 
 export const getAllUsers = async (req, res) => {
@@ -50,8 +54,10 @@ export const getUserById = async (req, res) => {
     // kullancıı kendi profilini görüntüleyebilir veya admin/moderator ise
     const requestedUserId = req.params.id;
     const currentUser = req.user;
-    if (currentUser._id.toString() !== requestedUserId &&
-                ![ROLES.ADMIN, ROLES.MODERATOR].includes(currentUser.role)) {
+    if (
+      currentUser._id.toString() !== requestedUserId &&
+      ![ROLES.ADMIN, ROLES.MODERATOR].includes(currentUser.role)
+    ) {
       return res.status(403).json({
         success: false,
         message: 'Bu kullanıcının bilgilerini görmeye yetkiniz yok',
@@ -174,5 +180,36 @@ export const deleteUser = async (req, res) => {
       message: 'sunucu hatası',
       error: error.message,
     });
+  }
+};
+
+//kullanıcı için profi fotoğrafı yükleme
+export const uploadUserPhotoController = async (req, res, next) => {
+  try {
+    const file = req.file;
+
+    if (!file)
+      return res
+        .status(400)
+        .json({ success: false, message: 'Dosya yüklenemedi' });
+
+    let photoUrl;
+    const enableCloudinary = env(CLOUDINARY.ENABLE_CLOUDINARY);
+
+    if (enableCloudinary === 'true') {
+      photoUrl = await saveFileToCloudinary(file);
+    } else {
+      const fileName = await saveFileToUploadDir(file);
+
+      photoUrl = `/uploads/${fileName}`;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Fotoğraf yüklendi',
+      data: { photoUrl },
+    });
+  } catch (error) {
+    next(error);
   }
 };

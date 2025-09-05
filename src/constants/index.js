@@ -26,3 +26,25 @@ export const SMTP = {
   SMTP_FROM: 'SMTP_FROM',
 };
 export const TEMPLATE_DIR = path.join(process.cwd(), 'src', 'templates');
+
+//dosya yükleme sabitleri
+
+//geçici kalsör
+export const TEMP_UPLOAD_DIR = path.join(process.cwd(), 'temp');
+
+//kalıcı klasör
+export const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
+
+export const CLOUDINARY = {
+  CLOUD_NAME: 'CLOUDINARY_CLOUD_NAME',
+  API_KEY: 'CLOUDINARY_API_KEY',
+  API_SECRET: 'CLOUDINARY_API_SECRET',
+  ENABLE_CLOUDINARY: 'ENABLE_CLOUDINARY',
+};
+
+
+//DOSYA YÜKLEME LİMİTİ
+export const UPLOAD_LIMITS = {
+  MAX_FILE_SIZE: 5 * 1024 * 1024,
+  MAX_FILES: 10,
+};

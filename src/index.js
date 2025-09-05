@@ -209,9 +209,17 @@ import creditCardRoutes from './routes/creditCardRoutes.js';
 import balanceRoutes from './routes/balanceRoutes.js';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoutes.js';
+import { TEMP_UPLOAD_DIR, TEMPLATE_DIR, UPLOAD_DIR } from './constants/index.js';
+import upload from './middlewares/multer.js';
+import createDirIfNotExist from './utils/createDirIfNotExist.js';
 dotenv.config();
 connectDB();
 
+const bootstrap = async()=>{
+  await createDirIfNotExist(TEMP_UPLOAD_DIR);
+  await createDirIfNotExist(UPLOAD_DIR);
+};
+bootstrap();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -227,6 +235,8 @@ app.get('/', (req, res) =>
       users: '/users',
       creditCards: '/credit-card',
       balance: '/balance',
+      auth: '/auth',
+      upload: '/upload'
     },
   }),
 );
@@ -234,6 +244,7 @@ app.use('/users', userRoutes);
 app.use('/credit-card', creditCardRoutes);
 app.use('/balance', balanceRoutes);
 app.use("/auth",authRoutes);
+app.use("/uploads",express.static(UPLOAD_DIR));
 
 app.use('*', (req, res) => {
   res.status(404).json({
